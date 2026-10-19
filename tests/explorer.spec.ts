@@ -13,7 +13,6 @@ test("renders a real 3D seat view and changes the selected seat", async ({
   await page.selectOption("#block", "324");
   await page.fill("#row", "10");
   await page.fill("#seat", "7");
-  await page.getByRole("button", { name: "Take me to my seat" }).click();
   await expect(page.locator("#view-block")).toHaveText("Block 324.");
   await expect(page.locator("#view-seat")).toHaveText("Row 10 · Seat 7");
   await expect(page).toHaveURL(/block=324&row=10&seat=7/);
@@ -40,7 +39,6 @@ test("changes perspective by block map and validates generated row bounds", asyn
   await expect(page.locator("#row")).toHaveValue("8");
   await expect(page.locator("#seat")).toHaveValue("24");
   await page.fill("#row", "9");
-  await page.getByRole("button", { name: "Take me to my seat" }).click();
   expect(
     await page
       .locator("#row")
@@ -64,7 +62,6 @@ test("drops a standing pin, supports keyboard adjustments, and restores its shar
   await page.keyboard.press("ArrowDown");
   const after = new URL(page.url()).searchParams.get("v");
   expect(Number(after)).toBeGreaterThan(Number(before));
-  await page.getByRole("button", { name: "Take me to my spot" }).click();
   const url = page.url(),
     pin = await page.locator("#standing-pin").getAttribute("transform");
   await page.goto(url);
@@ -183,7 +180,6 @@ test("runs the standalone preview in an opaque sandbox without asset requests", 
   await expect(preview.locator("#view-block")).toHaveText("Block 133.");
   await preview.locator("#row").fill("4");
   await preview.locator("#seat").fill("8");
-  await preview.getByRole("button", { name: "Take me to my seat" }).click();
   await expect(preview.locator("#view-seat")).toHaveText("Row 4 · Seat 8");
   await preview.locator("#row").fill("5");
   await preview.locator("#row").press("Enter");

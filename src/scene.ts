@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import stagePosterUrl from "./assets/lany-singapore-poster.jpg";
 import {
   BLOCKS,
   STAGE,
@@ -167,55 +168,22 @@ export class SeatScene {
         this.box(0.08, 3.5, 0.08, x, 1.75, z, barrierMaterial);
   }
 
-  private screenTexture(side = false) {
-    const canvas = document.createElement("canvas");
-    canvas.width = side ? 384 : 1536;
-    canvas.height = 768;
-    const ctx = canvas.getContext("2d")!;
-    const gradient = ctx.createLinearGradient(0, 0, 0, 768);
-    gradient.addColorStop(0, "#f3dbb8");
-    gradient.addColorStop(0.43, "#eaa075");
-    gradient.addColorStop(1, "#8e342c");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, 768);
-    ctx.fillStyle = "#f9e4bc";
-    ctx.beginPath();
-    ctx.arc(canvas.width * 0.5, 280, side ? 115 : 190, 0, Math.PI * 2);
-    ctx.fill();
-    for (let i = 0; i < 6; i++) {
-      ctx.fillStyle = [
-        "#c3765e",
-        "#ad614e",
-        "#994d40",
-        "#814539",
-        "#723d34",
-        "#5b302c",
-      ][i];
-      ctx.beginPath();
-      ctx.moveTo(0, 500 + i * 34);
-      for (let x = 0; x <= canvas.width; x += 8)
-        ctx.lineTo(
-          x,
-          480 +
-            i * 35 +
-            Math.sin(x / 220 + i * 0.8) * 35 +
-            Math.cos(x / 93 + i) * 10,
-        );
-      ctx.lineTo(canvas.width, 768);
-      ctx.lineTo(0, 768);
-      ctx.fill();
-    }
-    ctx.fillStyle = "#322d24";
-    ctx.textAlign = "center";
-    ctx.font = `bold ${side ? 88 : 260}px Arial, sans-serif`;
-    ctx.fillText("LANY", canvas.width / 2, side ? 342 : 360);
-    if (!side) {
-      ctx.font = "30px Georgia, serif";
-      ctx.fillText("soft world tour", canvas.width / 2, 416);
-    }
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.colorSpace = THREE.SRGBColorSpace;
-    return texture;
+  private screenMaterial(cropped = false) {
+    const material = new THREE.MeshBasicMaterial({ color: 0x555555, toneMapped: false });
+    new THREE.TextureLoader().load(stagePosterUrl, (texture) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      if (cropped) {
+        // The portrait side screens show the poster's central third while the
+        // main screen preserves the full supplied 3:2 composition.
+        texture.repeat.set(1 / 3, 1);
+        texture.offset.set(1 / 3, 0);
+      }
+      material.color.set(0xffffff);
+      material.map = texture;
+      material.needsUpdate = true;
+      this.render();
+    });
+    return material;
   }
 
   private buildStage() {
@@ -223,11 +191,8 @@ export class SeatScene {
     this.box(29, 1.6, 9, 0, 0.8, -35, dark);
     this.box(31, 19, 0.6, 0, 10, -40, this.material(0x0b1014));
     const screen = new THREE.Mesh(
-      new THREE.PlaneGeometry(25, 12.5),
-      new THREE.MeshBasicMaterial({
-        map: this.screenTexture(),
-        toneMapped: false,
-      }),
+      new THREE.PlaneGeometry(18.75, 12.5),
+      this.screenMaterial(),
     );
     screen.position.set(0, 10.1, -39.55);
     this.scene.add(screen);
@@ -235,10 +200,7 @@ export class SeatScene {
       this.box(6.3, 12, 0.5, x, 10.8, -36.7, dark);
       const side = new THREE.Mesh(
         new THREE.PlaneGeometry(5.6, 11.2),
-        new THREE.MeshBasicMaterial({
-          map: this.screenTexture(true),
-          toneMapped: false,
-        }),
+        this.screenMaterial(true),
       );
       side.position.set(x, 10.8, -36.4);
       this.scene.add(side);

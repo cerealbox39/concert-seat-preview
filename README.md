@@ -62,7 +62,7 @@ This is a **conceptual preview, not a verified sightline, ticket checker, or off
 
 - The supplied LANY event seating diagram is the primary reference. It explicitly says it is not to scale.
 - All 55 numbered blocks in that diagram are included: 109–114, 128–133, 209–233, 309–314, 318–320, 322–324 and 328–333. Their arrangement is an approximate horseshoe, with the stage at one end and Pen B west of Pen A.
-- Dimensions, block shapes, row counts, seat counts, seat numbering direction, tier elevations, stage and screen geometry, crowd and lighting are invented modelling assumptions. The screen artwork is generated locally by this project.
+- Dimensions, block shapes, row counts, seat counts, seat numbering direction, tier elevations, stage and screen geometry, crowd and lighting are invented modelling assumptions. The stage screens use the LANY Singapore event poster supplied for this project; its presence does not imply the real production will use it on stage.
 - Row 1 is at the front of each modelled block. The app's input limits are model limits, not evidence that a real ticket is invalid. The preview does not account for real obstructions, production equipment, accessible seating arrangements or actual crowd density.
 - Standing pins are hypothetical positions. They do not reserve a place or imply assigned standing locations.
 - Displayed distance is the horizontal distance to the modelled stage centre. Eye level is measured above the modelled arena floor.

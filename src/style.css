@@ -1314,14 +1314,9 @@ dialog strong {
     margin: 0;
   }
   #seat-form > .model-note {
-    grid-column: 1;
+    grid-column: 1 / -1;
     grid-row: 3;
     margin: 10px 0 0;
-  }
-  #seat-form > .primary-button {
-    grid-column: 2;
-    grid-row: 3;
-    margin-top: 15px;
   }
   .map-details {
     margin-top: 20px;
@@ -1399,7 +1394,7 @@ dialog strong {
   }
   .pin-map {
     grid-column: 2;
-    grid-row: 1 / 5;
+    grid-row: 1 / 4;
     max-width: 300px;
     justify-self: center;
     width: 100%;
@@ -1411,11 +1406,6 @@ dialog strong {
   }
   .pin-instructions span {
     font-size: 10px;
-  }
-  #standing-go {
-    grid-column: 1;
-    grid-row: 4;
-    margin-top: 10px;
   }
   .map-details summary {
     font-size: 9px;
@@ -1532,10 +1522,6 @@ dialog strong {
   #seat-form > .model-note {
     margin-top: 10px;
     font-size: 9px;
-  }
-  #seat-form > .primary-button {
-    margin-top: 17px;
-    padding: 16px;
   }
   .map-details {
     margin-top: 22px;
@@ -1688,9 +1674,6 @@ dialog strong {
   .pin-instructions {
     font-size: 11px;
     margin-top: 14px;
-  }
-  #standing-go {
-    margin-top: 17px;
   }
   .pen-switch {
     margin-bottom: 14px;

@@ -82,14 +82,12 @@ $("#app").innerHTML = `
             <div><label class="field-label" for="seat">SEAT</label><div class="number-field"><button type="button" data-step="seat:-1" aria-label="Previous seat">−</button><input id="seat" name="seat" type="number" min="1" max="30" value="12" required inputmode="numeric" /><button type="button" data-step="seat:1" aria-label="Next seat">+</button></div></div>
           </div>
           <p id="model-note" class="model-note">Estimated layout · rows 1–18, seats 1–30</p>
-          <button type="button" id="seat-go" class="primary-button">Take me to my seat ${icon("arrow")}</button>
         </form>
         <div id="standing-picker" hidden>
           <div class="field-label">STANDING PEN <span>CHOOSE YOUR SPOT</span></div>
           <div class="pen-switch" role="group" aria-label="Standing pen"><button id="pen-a" aria-pressed="true">Pen A</button><button id="pen-b" aria-pressed="false">Pen B</button></div>
           <div id="pin-map" class="pin-map"></div>
           <p class="pin-instructions">${icon("pin")} Tap the floor to drop your pin.<br><span>Use arrow keys to fine-tune your spot.</span></p>
-          <button type="button" id="standing-go" class="primary-button">Take me to my spot ${icon("arrow")}</button>
         </div>
         <details class="map-details" id="map-details" ${matchMedia("(min-width: 900px)").matches ? "open" : ""}>
           <summary><span>THE ROOM AT A GLANCE</span>${icon("chevron")}</summary>
@@ -150,7 +148,7 @@ function makeBlockMap() {
       seated.block = element.dataset.block!;
       limitSeat();
       setMode("seat");
-      applySelection(seated, false);
+      applySelection(seated);
       element.setAttribute("aria-label", `Block ${seated.block}, selected`);
     };
     element.addEventListener("click", choose);
@@ -190,7 +188,7 @@ function makePinMap() {
       v: clamp((point.y - 59) / 138, 0, 1),
     };
     updatePin();
-    applySelection(standing, false);
+    applySelection(standing);
   };
   svg.addEventListener("pointerdown", (e) => {
     if (e.button !== 0) return;
@@ -227,7 +225,7 @@ function makePinMap() {
       if (e.key === "ArrowLeft") standing.u = clamp(standing.u - 0.04, 0, 1);
       if (e.key === "ArrowRight") standing.u = clamp(standing.u + 0.04, 0, 1);
       updatePin();
-      applySelection(standing, false);
+      applySelection(standing);
     }),
   );
 }
@@ -282,7 +280,7 @@ function setMode(mode: Selection["mode"]) {
   updatePin();
 }
 
-function applySelection(next: Selection, scroll = false, animate = true) {
+function applySelection(next: Selection, animate = true) {
   selection = { ...next };
   const current = selection;
   if (selection.mode === "seat") seated = { ...selection };
@@ -318,20 +316,13 @@ function applySelection(next: Selection, scroll = false, animate = true) {
   updateLocation(selectionUrl(selection, location.href));
   $("#announcement").textContent =
     `${selectionLabel(selection)}. Approximate preview${sceneFailed ? " unavailable in this browser" : " updated"}.`;
-  if (scroll && matchMedia("(max-width: 899px)").matches)
-    $("#viewport").scrollIntoView({
-      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "instant"
-        : "smooth",
-      block: "start",
-    });
   syncForm();
 }
 
 makeBlockMap();
 makePinMap();
 setMode(selection.mode);
-applySelection(selection, false, false);
+applySelection(selection, false);
 
 $("#seated-mode").addEventListener("click", () => {
   setMode("seat");
@@ -347,25 +338,29 @@ $("#block").addEventListener("change", () => {
   syncForm();
   applySelection(seated);
 });
-function goToSeat() {
-  if (!$<HTMLFormElement>("#seat-form").reportValidity()) return;
+function updateSeatFromInputs() {
+  if (!$<HTMLFormElement>("#seat-form").checkValidity()) return;
   seated.row = Number($<HTMLInputElement>("#row").value);
   seated.seat = Number($<HTMLInputElement>("#seat").value);
-  applySelection(seated, true);
+  applySelection(seated);
 }
-$("#seat-go").addEventListener("click", goToSeat);
 $("#seat-form").addEventListener("submit", (e) => {
   e.preventDefault();
-  goToSeat();
+  updateSeatFromInputs();
 });
-for (const field of ["row", "seat"])
+for (const field of ["row", "seat"]) {
+  $(`#${field}`).addEventListener("input", updateSeatFromInputs);
+  $(`#${field}`).addEventListener("change", () => {
+    $<HTMLInputElement>(`#${field}`).reportValidity();
+  });
   $(`#${field}`).addEventListener("keydown", (e) => {
     // No native form submission is needed; sandboxed HTML viewers may block it.
     if (e.key === "Enter") {
       e.preventDefault();
-      goToSeat();
+      updateSeatFromInputs();
     }
   });
+}
 document.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((button) =>
   button.addEventListener("click", () => {
     const [field, step] = button.dataset.step!.split(":") as [
@@ -388,9 +383,6 @@ for (const pen of ["A", "B"] as const)
     updatePin();
     applySelection(standing);
   });
-$("#standing-go").addEventListener("click", () =>
-  applySelection(standing, true),
-);
 $("#reset-view").addEventListener("click", () => {
   scene?.reset();
   $<HTMLInputElement>("#zoom").value = "68";
