@@ -1,6 +1,6 @@
 /** Conceptual geometry derived from the supplied event block diagram.
  * All measurements, rows and seat counts are estimates, not venue survey data.
- * Stage is toward negative Z; east is positive X. */
+ * Stage is toward negative Z; east/right of the supplied plan is negative X. */
 export type Point = { x: number; y: number; z: number };
 export type Block = {
   id: string;
@@ -34,7 +34,6 @@ export const clamp = (value: number, min: number, max: number) =>
 
 function mainBlock(number: number): Block {
   let x: number, z: number, nx: number, nz: number, width: number;
-  const hasLowerTier = number <= 214 || number >= 228;
   if (number <= 214) {
     x = 28;
     z = -24 + (number - 209) * 8.4;
@@ -55,12 +54,16 @@ function mainBlock(number: number): Block {
     nz = Math.sin(angle);
     width = 5.4;
   }
+  // Mirror the bowl to match the supplied event plan: the 209–214 stack is
+  // east/right of the stage and the 228–233 stack is west/left.
+  x = -x;
+  nx = -nx;
   return {
     id: String(number),
     tier: "Main",
     rows: 18,
-    firstRow: hasLowerTier ? 9 : 1,
-    lastRow: hasLowerTier ? 26 : 18,
+    firstRow: 1,
+    lastRow: 35,
     seats: number >= 215 && number <= 227 ? 22 : 30,
     center: { x, y: 5.5, z },
     normal: { x: nx, z: nz },
@@ -87,7 +90,7 @@ export const BLOCKS: Block[] = [
       tier: "Lower" as const,
       rows: 8,
       firstRow: 1,
-      lastRow: 8,
+      lastRow: 35,
       seats: 24,
       center: {
         x: b.center.x - b.normal.x * 5.3,
@@ -106,8 +109,8 @@ export const BLOCKS: Block[] = [
       id: String(id),
       tier: "Upper" as const,
       rows: 12,
-      firstRow: b.lastRow + 1,
-      lastRow: b.lastRow + 12,
+      firstRow: 1,
+      lastRow: 35,
       seats: b.seats,
       center: {
         x: b.center.x + b.normal.x * 11,
@@ -128,19 +131,22 @@ export function getBlock(id: string): Block {
 }
 
 export function seatPosition(block: Block, row: number, seat: number): Point {
-  const rowIndex = clamp(row, block.firstRow, block.lastRow) - block.firstRow;
-  const back = ((rowIndex + 0.5) / block.rows) * block.depth;
+  const rowProgress =
+    (clamp(row, block.firstRow, block.lastRow) - block.firstRow) /
+    (block.lastRow - block.firstRow);
+  const modelRow = rowProgress * (block.rows - 1);
+  const back = ((modelRow + 0.5) / block.rows) * block.depth;
   const across = ((seat - 0.5) / block.seats - 0.5) * block.width;
   return {
     x: block.center.x + block.normal.x * back + block.tangent.x * across,
-    y: block.center.y + rowIndex * block.rise + 1.18,
+    y: block.center.y + modelRow * block.rise + 1.18,
     z: block.center.z + block.normal.z * back + block.tangent.z * across,
   };
 }
 
 export function standingPosition(pen: "A" | "B", u: number, v: number): Point {
   return {
-    x: (pen === "A" ? 1.5 : -20) + clamp(u, 0, 1) * 18.5,
+    x: (pen === "A" ? -20 : 1.5) + clamp(u, 0, 1) * 18.5,
     y: 1.65,
     z: -27 + clamp(v, 0, 1) * 47,
   };

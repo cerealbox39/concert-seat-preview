@@ -78,10 +78,10 @@ $("#app").innerHTML = `
             )
             .join("")}</select>${icon("chevron")}</div>
           <div class="seat-fields">
-            <div><label class="field-label" for="row">ROW</label><div class="number-field"><button type="button" data-step="row:-1" aria-label="Previous row">−</button><input id="row" name="row" type="number" min="9" max="26" value="14" required inputmode="numeric" /><button type="button" data-step="row:1" aria-label="Next row">+</button></div></div>
+            <div><label class="field-label" for="row">ROW</label><div class="number-field"><button type="button" data-step="row:-1" aria-label="Previous row">−</button><input id="row" name="row" type="number" min="1" max="35" value="14" required inputmode="numeric" /><button type="button" data-step="row:1" aria-label="Next row">+</button></div></div>
             <div><label class="field-label" for="seat">SEAT</label><div class="number-field"><button type="button" data-step="seat:-1" aria-label="Previous seat">−</button><input id="seat" name="seat" type="number" min="1" max="30" value="12" required inputmode="numeric" /><button type="button" data-step="seat:1" aria-label="Next seat">+</button></div></div>
           </div>
-          <p id="model-note" class="model-note">Estimated ticket labels · rows 9–26, seats 1–30</p>
+          <p id="model-note" class="model-note">Broad estimate · rows 1–35, seats 1–30</p>
         </form>
         <div id="standing-picker" hidden>
           <div class="field-label">STANDING PEN <span>CHOOSE YOUR SPOT</span></div>
@@ -118,19 +118,41 @@ $("#app").innerHTML = `
   <footer><span>UNOFFICIAL · NOT AFFILIATED WITH LANY OR THE VENUE</span><a href="https://github.com/cerealbox39/concert-seat-preview" target="_blank" rel="noopener noreferrer">Built in the open ${icon("arrow")}</a></footer>
   <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
   <div id="toast" class="toast" role="status" hidden></div>
-  <dialog id="about-dialog" aria-labelledby="about-title"><button class="dialog-close icon-button" aria-label="Close information">${icon("close")}</button><span class="eyebrow">A NOTE BEFORE THE LIGHTS GO DOWN</span><h2 id="about-title">A preview.<br><em>Not a promise.</em></h2><p>This fan-made explorer imagines LANY’s soft world tour at Singapore Indoor Stadium on <strong>4 November 2026</strong>, using the event and block plan supplied for this project.</p><p>The block IDs and standing pen arrangement follow that plan. The plan is not to scale: stadium dimensions, row and seat counts, seat numbering direction, elevations, crowd, screens and stage design are <strong>illustrative estimates</strong>. They are not verified sightlines or an official production layout.</p><p>The model treats row labels as continuing through stacked tiers: side stacks use estimated rows 1–8, 9–26 and 27–38; rear stacks use rows 1–18 and 19–30. Seat numbers run across each block and are estimated from its width. Real labels can differ, and a ticket outside these ranges is not invalid. Distances are measured to the centre of the modelled stage; eye level is height above the arena floor.</p><p>Standing pens have no assigned positions. Your pin is a hypothetical spot; crowd density, people in front of you and access arrangements will change your real view.</p><div class="source-note"><strong>Reference notes</strong><p>Primary reference: the supplied LANY event seating diagram. No authoritative public block-by-block row and seat inventory was available to verify these estimates. Singapore National Stadium is a different venue.</p><a href="https://aviewfrommyseat.com/venue/Singapore+Indoor+Stadium/" target="_blank" rel="noopener noreferrer">Explore Indoor Stadium fan photos ${icon("arrow")}</a><span>External, user-contributed photos; not used to calibrate this model.</span></div><button class="primary-button dialog-done">Got it. Let’s find my view ${icon("arrow")}</button></dialog>
+  <dialog id="about-dialog" aria-labelledby="about-title"><button class="dialog-close icon-button" aria-label="Close information">${icon("close")}</button><span class="eyebrow">A NOTE BEFORE THE LIGHTS GO DOWN</span><h2 id="about-title">A preview.<br><em>Not a promise.</em></h2><p>This fan-made explorer imagines LANY’s soft world tour at Singapore Indoor Stadium on <strong>4 November 2026</strong>, using the event and block plan supplied for this project.</p><p>The block IDs and standing pen arrangement follow that plan. The plan is not to scale: stadium dimensions, row and seat counts, seat numbering direction, elevations, crowd, screens and stage design are <strong>illustrative estimates</strong>. They are not verified sightlines or an official production layout.</p><p>Ticket row labels are treated as restarting within each numbered block. The selector accepts rows 1–35 as a broad input estimate, then maps the chosen row proportionally onto the simplified 3D terraces. Seat numbers run across each block and are estimated from its width. Real limits can differ, and a ticket outside these ranges is not invalid. Distances are measured to the centre of the modelled stage; eye level is height above the arena floor.</p><p>Standing pens have no assigned positions. Your pin is a hypothetical spot; crowd density, people in front of you and access arrangements will change your real view.</p><div class="source-note"><strong>Reference notes</strong><p>Primary reference: the supplied LANY event seating diagram. No authoritative public block-by-block row and seat inventory was available to verify these estimates. Singapore National Stadium is a different venue.</p><a href="https://aviewfrommyseat.com/venue/Singapore+Indoor+Stadium/" target="_blank" rel="noopener noreferrer">Explore Indoor Stadium fan photos ${icon("arrow")}</a><span>External, user-contributed photos; not used to calibrate this model.</span></div><button class="primary-button dialog-done">Got it. Let’s find my view ${icon("arrow")}</button></dialog>
   <dialog id="share-dialog" aria-labelledby="share-title"><button class="dialog-close icon-button" aria-label="Close share dialog">${icon("close")}</button><span class="eyebrow">SAVE YOUR PERSPECTIVE</span><h2 id="share-title">Pass it on.</h2><p>Copy this link to reopen the same seat or standing position.</p><label class="field-label" for="share-url">YOUR VIEW LINK</label><input id="share-url" class="share-url" readonly /><button class="primary-button dialog-done">Done ${icon("arrow")}</button></dialog>
 `;
 
 function makeBlockMap() {
-  const project = (x: number, z: number) =>
-    `${(140 + x * 2.4).toFixed(1)},${(38 + (z + 36) * 2.05).toFixed(1)}`;
+  // Isometric projection matching the supplied plan: stage at lower left,
+  // east blocks at lower right and west blocks at upper left.
+  const projectedPoint = (x: number, z: number) => {
+    const forward = z + 35;
+    const east = -x;
+    return {
+      x: 32 + forward * 1.95 + east * 1.12,
+      y: 224 - forward * 1.7 + east * 0.3,
+    };
+  };
+  const project = (x: number, z: number) => {
+    const p = projectedPoint(x, z);
+    return `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+  };
+  const floorPolygon = (minX: number, maxX: number) =>
+    [
+      [minX, -27],
+      [maxX, -27],
+      [maxX, 20],
+      [minX, 20],
+    ]
+      .map(([x, z]) => project(x, z))
+      .join(" ");
+  const foh = projectedPoint(0, 22.5);
   $("#block-map").innerHTML =
-    `<svg viewBox="0 0 280 255" role="group" aria-label="Approximate seating map. Stage at top; east blocks to the right.">
-    <rect x="106" y="8" width="68" height="17" rx="3" class="map-stage"/><text x="140" y="20" class="stage-label">STAGE</text>
-    <rect x="92" y="44" width="44" height="96" rx="3" class="map-pen"/><rect x="144" y="44" width="44" height="96" rx="3" class="map-pen"/>
-    <text x="114" y="91" class="pen-label">PEN B</text><text x="166" y="91" class="pen-label">PEN A</text>
-    <rect x="134" y="145" width="12" height="13" rx="1" class="map-foh"/><text x="140" y="168" class="foh-label">FOH</text>
+    `<svg viewBox="0 0 280 255" role="group" aria-label="Approximate seating map matching the supplied plan. Stage at lower left; east blocks including 310 run along the lower right.">
+    <polygon points="13,226 65,248 97,228 45,206" class="map-stage"/><text x="55" y="229" class="stage-label" transform="rotate(22 55 229)">STAGE</text>
+    <polygon points="${floorPolygon(1.5, 20)}" class="map-pen"/><polygon points="${floorPolygon(-20, -1.5)}" class="map-pen"/>
+    <text x="88" y="181" class="pen-label" transform="rotate(-31 88 181)">PEN B</text><text x="110" y="199" class="pen-label" transform="rotate(-31 110 199)">PEN A</text>
+    <rect x="${(foh.x - 5).toFixed(1)}" y="${(foh.y - 4).toFixed(1)}" width="10" height="8" rx="1" class="map-foh" transform="rotate(-31 ${foh.x.toFixed(1)} ${foh.y.toFixed(1)})"/><text x="${foh.x.toFixed(1)}" y="${(foh.y + 11).toFixed(1)}" class="foh-label">FOH</text>
     ${BLOCKS.map((b) => {
       const points = blockCorners(b)
         .map((p) => project(p.x, p.z))
@@ -141,7 +163,7 @@ function makeBlockMap() {
       ).split(",");
       return `<g class="map-block" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
     }).join("")}
-    <text x="14" y="133" class="direction-label" transform="rotate(-90 14 133)">WEST</text><text x="266" y="133" class="direction-label" transform="rotate(90 266 133)">EAST</text>
+    <text x="19" y="155" class="direction-label" transform="rotate(-31 19 155)">WEST</text><text x="190" y="239" class="direction-label" transform="rotate(-31 190 239)">EAST</text>
   </svg>`;
   document.querySelectorAll<SVGGElement>("[data-block]").forEach((element) => {
     const choose = () => {
@@ -261,7 +283,7 @@ function syncForm() {
   $<HTMLInputElement>("#seat").max = String(b.seats);
   $("#tier-label").textContent = `${b.tier.toUpperCase()} TIER`;
   $("#model-note").textContent =
-    `Estimated ticket labels · rows ${b.firstRow}–${b.lastRow}, seats 1–${b.seats}`;
+    `Broad estimate · rows ${b.firstRow}–${b.lastRow}, seats 1–${b.seats}`;
   for (const field of ["row", "seat"] as const) {
     const min = field === "row" ? b.firstRow : 1;
     const max = field === "row" ? b.lastRow : b.seats;
@@ -301,9 +323,9 @@ function applySelection(next: Selection, animate = true) {
   $("#stat-location").textContent = isSeat
     ? p.z > 25
       ? "Rear bowl"
-      : p.x > 0
-        ? "East side"
-        : "West side"
+      : p.x < 0
+        ? "East · right of stage"
+        : "West · left of stage"
     : `Pen ${current.pen} · ${current.v < 0.33 ? "Front" : current.v < 0.66 ? "Middle" : "Rear"}`;
   $("#stat-distance").innerHTML =
     `${Math.round(Math.hypot(p.x, p.z + 35))} <small>m</small>`;

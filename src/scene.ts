@@ -124,7 +124,11 @@ export class SeatScene {
     for (const block of BLOCKS) {
       const angle = Math.atan2(-block.tangent.z, block.tangent.x);
       for (let visualRow = 0; visualRow < block.rows; visualRow++) {
-        const ticketRow = block.firstRow + visualRow;
+        const ticketRow = Math.round(
+          block.firstRow +
+            (visualRow / (block.rows - 1)) *
+              (block.lastRow - block.firstRow),
+        );
         const depth = ((visualRow + 0.5) * block.depth) / block.rows;
         const height = block.center.y + visualRow * block.rise;
         dummy.position.set(

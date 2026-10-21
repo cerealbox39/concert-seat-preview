@@ -30,21 +30,39 @@ test("renders a real 3D seat view and changes the selected seat", async ({
 test("changes perspective by block map and validates generated row bounds", async ({
   page,
 }) => {
-  await page.goto("/?block=211&row=18&seat=30");
+  await page.goto("/?block=210&row=21&seat=30");
+  await expect(page.locator("#view-seat")).toHaveText("Row 21 · Seat 30");
   const details = page.locator("#map-details");
   if ((await details.getAttribute("open")) === null)
     await details.locator("summary").click();
   await page.locator('[data-block="109"]').click();
   await expect(page.locator("#view-block")).toHaveText("Block 109.");
-  await expect(page.locator("#row")).toHaveValue("8");
+  await expect(page.locator("#row")).toHaveValue("21");
   await expect(page.locator("#seat")).toHaveValue("24");
-  await page.fill("#row", "9");
+  await page.fill("#row", "36");
   expect(
     await page
       .locator("#row")
       .evaluate((input: HTMLInputElement) => input.validity.rangeOverflow),
   ).toBe(true);
-  await expect(page.locator("#view-seat")).toHaveText("Row 8 · Seat 24");
+  await expect(page.locator("#view-seat")).toHaveText("Row 21 · Seat 24");
+});
+
+test("places block 310 on the east/right side of the supplied-plan map", async ({
+  page,
+}) => {
+  await page.goto("/?block=310&row=21&seat=1");
+  await expect(page.locator("#stat-location")).toHaveText(
+    "East · right of stage",
+  );
+  const details = page.locator("#map-details");
+  if ((await details.getAttribute("open")) === null)
+    await details.locator("summary").click();
+  const stage = await page.locator("#block-map .map-stage").boundingBox();
+  const block = await page.locator('[data-block="310"]').boundingBox();
+  expect(stage).not.toBeNull();
+  expect(block).not.toBeNull();
+  expect(block!.x).toBeGreaterThan(stage!.x);
 });
 
 test("drops a standing pin, supports keyboard adjustments, and restores its shared URL", async ({
