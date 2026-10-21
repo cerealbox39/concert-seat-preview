@@ -89,12 +89,6 @@ $("#app").innerHTML = `
           <div id="pin-map" class="pin-map"></div>
           <p class="pin-instructions">${icon("pin")} Tap the floor to drop your pin.<br><span>Use arrow keys to fine-tune your spot.</span></p>
         </div>
-        <details class="map-details" id="map-details" ${matchMedia("(min-width: 900px)").matches ? "open" : ""}>
-          <summary><span>THE ROOM AT A GLANCE</span>${icon("chevron")}</summary>
-          <p class="map-subtitle">Pick a block to explore its view.</p>
-          <div id="block-map" class="block-map"></div>
-          <div class="map-legend"><span><i></i> Available blocks</span><span><i class="selected-dot"></i> Your block</span></div>
-        </details>
       </aside>
 
       <section class="view-panel" aria-label="Seat preview">
@@ -112,6 +106,13 @@ $("#app").innerHTML = `
         <div class="view-stats"><div><span class="stat-label">YOUR LOCATION</span><strong id="stat-location">East side</strong></div><div><span class="stat-label">STAGE DISTANCE <span title="Estimated from conceptual geometry">≈</span></span><strong id="stat-distance">45 <small>m</small></strong></div><div><span class="stat-label">EYE LEVEL <span title="Estimated from conceptual geometry">≈</span></span><strong id="stat-height">9 <small>m</small></strong></div><div class="stat-note">A feeling for the view.<br>A head start on the memories.</div></div>
         <div class="estimate-note">${icon("info")}<p>This is an illustrative preview. Row numbering, sightlines, stage design and distances are estimated. <button id="learn-more">How it works ${icon("arrow")}</button></p></div>
       </section>
+      <details class="map-details" id="map-details" open>
+        <summary><span class="map-heading"><span class="section-number">02 /</span><span>THE ROOM AT A GLANCE</span><small>Pick a block to explore its view.</small></span>${icon("chevron")}</summary>
+        <div class="map-canvas">
+          <div id="block-map" class="block-map"></div>
+          <div class="map-legend"><span><i></i> Available blocks</span><span><i class="selected-dot"></i> Your block</span></div>
+        </div>
+      </details>
     </div>
     <div class="below-explorer"><span>GOOD NIGHTS START WITH A GOOD VIEW.</span><p>Made for fans, by a fan. <span class="little-star">✳</span> See you in Singapore.</p></div>
   </main>
@@ -147,6 +148,12 @@ function makeBlockMap() {
   const foh = projectedPoint(0, 22.5);
   $("#block-map").innerHTML =
     `<svg viewBox="0 0 280 255" role="group" aria-label="Flat top-down seating map. Stage at the top; east blocks including 310 are on the right.">
+    <defs>
+      <radialGradient id="arena-glow" cx="50%" cy="32%" r="67%"><stop offset="0" stop-color="#73875e" stop-opacity=".15"/><stop offset="1" stop-color="#111713" stop-opacity="0"/></radialGradient>
+      <pattern id="arena-grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="#ddebab" stroke-opacity=".025" stroke-width=".5"/></pattern>
+    </defs>
+    <ellipse cx="140" cy="128" rx="126" ry="119" class="map-arena-glow"/>
+    <rect x="8" y="4" width="264" height="244" rx="122" class="map-arena-grid"/>
     <rect x="105" y="5" width="70" height="19" rx="2" class="map-stage"/><text x="140" y="18" class="stage-label">STAGE</text>
     <polygon points="${floorPolygon(1.5, 20)}" class="map-pen"/><polygon points="${floorPolygon(-20, -1.5)}" class="map-pen"/>
     <text x="114" y="100" class="pen-label"><tspan x="114">STANDING</tspan><tspan x="114" dy="8">PEN B</tspan></text><text x="166" y="100" class="pen-label"><tspan x="166">STANDING</tspan><tspan x="166" dy="8">PEN A</tspan></text>
@@ -159,7 +166,7 @@ function makeBlockMap() {
         b.center.x + b.normal.x * b.depth * 0.5,
         b.center.z + b.normal.z * b.depth * 0.5,
       ).split(",");
-      return `<g class="map-block tier-${b.tier.toLowerCase()}" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon class="map-block-face" points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
+      return `<g class="map-block tier-${b.tier.toLowerCase()}" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon class="map-block-hit" points="${points}"/><polygon class="map-block-face" points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
     }).join("")}
     <text x="13" y="135" class="direction-label" transform="rotate(-90 13 135)">WEST</text><text x="267" y="135" class="direction-label" transform="rotate(90 267 135)">EAST</text><text x="140" y="248" class="direction-label">NORTH</text>
   </svg>`;

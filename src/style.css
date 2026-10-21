@@ -241,6 +241,9 @@ h1 > span:not(.title-star) {
 .explorer {
   display: grid;
   grid-template-columns: 310px minmax(0, 1fr);
+  grid-template-areas:
+    "location preview"
+    "map map";
   border: 1px solid #3b4439;
   border-radius: 10px;
   overflow: hidden;
@@ -248,6 +251,7 @@ h1 > span:not(.title-star) {
   box-shadow: 0 20px 70px #00000015;
 }
 .location-panel {
+  grid-area: location;
   padding: 27px 24px 22px;
   background: var(--panel);
   border-right: 1px solid #3b4439;
@@ -421,115 +425,164 @@ h2 {
   border-color: #ecf6cf;
 }
 .map-details {
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px solid #ffffff14;
+  grid-area: map;
+  margin: 0;
+  padding: 30px 34px 27px;
+  border-top: 1px solid #3b4439;
+  background: radial-gradient(
+    circle at 50% 20%,
+    #2c362c 0,
+    #1b231e 55%,
+    #171e1a 100%
+  );
 }
 .map-details summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 4px 18px;
   cursor: pointer;
   list-style: none;
   font-family: var(--mono);
-  font-size: 8px;
-  letter-spacing: 1.1px;
-  color: #aebaa2;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #d7dfcf;
 }
 .map-details summary::-webkit-details-marker {
   display: none;
 }
 .map-details summary > svg {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
+  color: var(--accent);
+  transition: transform 0.2s;
 }
 .map-details[open] summary > svg {
   transform: rotate(180deg);
 }
-.map-subtitle {
-  font-size: 10px;
-  color: #939e8a;
-  margin: 8px 0 12px;
+.map-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.map-heading small {
+  margin-left: 7px;
+  color: #8f9c89;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.map-canvas {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 18px 22px 14px;
+  background: #19211b;
+  border: 1px solid #ffffff0c;
+  border-radius: 8px;
+  box-shadow:
+    inset 0 1px 0 #ffffff08,
+    0 18px 45px #090d0a38;
 }
 #block-map {
-  background: #fafafa;
-  border: 1px solid #d8d8d4;
-  border-radius: 7px;
-  padding: 7px;
-  box-shadow: 0 10px 28px #0003;
+  background: transparent;
 }
 #block-map > svg {
   display: block;
   width: 100%;
+  max-width: 800px;
   height: auto;
-  max-height: 285px;
+  max-height: none;
+  margin: 0 auto;
   overflow: visible;
 }
+#block-map .map-arena-glow {
+  fill: url(#arena-glow);
+}
+#block-map .map-arena-grid {
+  fill: url(#arena-grid);
+}
 #block-map .map-stage {
-  fill: #f8f8f8;
-  stroke: #1d1d1d;
-  stroke-width: 0.8;
+  fill: var(--accent);
+  stroke: #f0f8d5;
+  stroke-width: 0.55;
 }
 #block-map .stage-label {
   font: 6px var(--mono);
   letter-spacing: 1px;
-  fill: #151515;
+  fill: #28321f;
   text-anchor: middle;
 }
 #block-map .map-pen {
-  fill: #31a3d1;
-  stroke: #fff;
-  stroke-width: 1.2;
+  fill: #283323;
+  stroke: #536344;
+  stroke-width: 0.75;
 }
 #block-map .pen-label {
   font: 6.5px var(--mono);
   letter-spacing: 0.6px;
-  fill: #101820;
+  fill: #9eb482;
   text-anchor: middle;
 }
 #block-map .map-foh {
-  fill: #111;
+  fill: #596252;
 }
 #block-map .foh-label {
   font: 5px var(--mono);
-  fill: #202020;
+  fill: #96a28c;
   text-anchor: middle;
 }
 .map-block {
   cursor: pointer;
   outline: none;
 }
+.map-block .map-block-hit {
+  fill: transparent;
+  stroke: transparent;
+  stroke-width: 5;
+  pointer-events: all;
+}
 .map-block .map-block-face {
-  fill: #31a3d1;
-  stroke: #fff;
-  stroke-width: 1.25;
-  transition: fill 0.15s;
+  fill: #35422f;
+  stroke: #66745d;
+  stroke-width: 0.75;
+  pointer-events: none;
+  transition:
+    fill 0.15s,
+    stroke 0.15s;
+}
+.map-block.tier-lower .map-block-face {
+  fill: #44533b;
+}
+.map-block.tier-upper .map-block-face {
+  fill: #293328;
 }
 .map-block text {
-  font:
-    5.2px Arial,
-    sans-serif;
-  fill: #101820;
+  font: 5px var(--mono);
+  fill: #c2ccb9;
   text-anchor: middle;
   pointer-events: none;
 }
 .map-block:hover .map-block-face,
 .map-block:focus-visible .map-block-face {
-  fill: #79c9e8;
-  stroke: #102a3b;
-  stroke-width: 1.2;
+  fill: #687b54;
+  stroke: #ddebab;
+  stroke-width: 1.1;
 }
 .map-block.active .map-block-face {
-  fill: #405fc1;
-  stroke: #18295f;
+  fill: var(--accent);
+  stroke: #f1f9d8;
+  stroke-width: 1.15;
 }
 .map-block.active text {
-  fill: #fff;
+  fill: #26301e;
   font-weight: bold;
 }
 #block-map .direction-label {
   font: 5.3px var(--mono);
-  fill: #222;
+  fill: #7f8d79;
   text-anchor: middle;
   letter-spacing: 2px;
 }
@@ -537,26 +590,29 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 17px;
-  color: #94a086;
-  font-size: 8px;
-  margin-top: 3px;
+  gap: 23px;
+  color: #9eaa98;
+  font-size: 10px;
+  margin-top: 10px;
 }
 .map-legend span {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 .map-legend i {
-  width: 8px;
-  height: 8px;
-  border-radius: 1px;
-  background: #31a3d1;
+  width: 9px;
+  height: 9px;
+  border: 1px solid #66745d;
+  border-radius: 2px;
+  background: #44533b;
 }
 .map-legend .selected-dot {
-  background: #405fc1;
+  background: var(--accent);
+  border-color: #f1f9d8;
 }
 .view-panel {
+  grid-area: preview;
   min-width: 0;
   display: flex;
   flex-direction: column;
@@ -1302,6 +1358,10 @@ dialog strong {
   }
   .explorer {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "location"
+      "map"
+      "preview";
   }
   .location-panel {
     border-right: 0;
@@ -1340,18 +1400,11 @@ dialog strong {
     margin: 10px 0 0;
   }
   .map-details {
-    margin-top: 20px;
-    padding-top: 18px;
-  }
-  .map-details[open] .block-map {
-    max-width: 340px;
-    margin: auto;
+    margin: 0;
+    padding: 26px 24px 23px;
   }
   .block-map > svg {
-    max-height: 300px;
-  }
-  .map-subtitle {
-    text-align: center;
+    max-height: none;
   }
   .map-legend {
     font-size: 9px;
@@ -1545,9 +1598,25 @@ dialog strong {
     font-size: 9px;
   }
   .map-details {
-    margin-top: 22px;
+    margin: 0;
+    padding: 23px 14px 20px;
   }
   .map-details summary {
+    font-size: 8px;
+    padding: 0 2px 14px;
+  }
+  .map-heading {
+    gap: 7px;
+  }
+  .map-heading small {
+    display: none;
+  }
+  .map-canvas {
+    padding: 12px 8px 11px;
+  }
+  .map-legend {
+    gap: 16px;
+    margin-top: 6px;
     font-size: 8px;
   }
   .viewport {
