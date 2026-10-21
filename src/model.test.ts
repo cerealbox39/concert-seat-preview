@@ -25,13 +25,13 @@ describe("event seating model", () => {
   });
   it("places later rows higher and farther away from the floor", () => {
     for (const b of BLOCKS) {
-      const front = seatPosition(b, 1, 1),
-        back = seatPosition(b, b.rows, 1);
+      const front = seatPosition(b, b.firstRow, 1),
+        back = seatPosition(b, b.lastRow, 1);
       expect(back.y).toBeGreaterThan(front.y);
       expect(
         (back.x - front.x) * b.normal.x + (back.z - front.z) * b.normal.z,
       ).toBeGreaterThan(0);
-      const otherSeat = seatPosition(b, 1, b.seats);
+      const otherSeat = seatPosition(b, b.firstRow, b.seats);
       expect(otherSeat.y).toBe(front.y);
       expect(
         Math.hypot(otherSeat.x - front.x, otherSeat.z - front.z),
@@ -40,7 +40,7 @@ describe("event seating model", () => {
   });
   it("places all seats above ground and in front of the stage plane", () => {
     for (const b of BLOCKS)
-      for (const row of [1, b.rows])
+      for (const row of [b.firstRow, b.lastRow])
         for (const seat of [1, b.seats]) {
           const p = seatPosition(b, row, seat);
           expect(p.y).toBeGreaterThan(0);
@@ -65,7 +65,8 @@ describe("event seating model", () => {
 describe("shareable locations", () => {
   it("round-trips seats and standing positions, including exact pen edges", () => {
     const locations: Selection[] = [
-      { mode: "seat", block: "333", row: 12, seat: 30 },
+      { mode: "seat", block: "333", row: 38, seat: 30 },
+      { mode: "seat", block: "324", row: 29, seat: 22 },
       { mode: "standing", pen: "B", u: 0, v: 1 },
       { mode: "standing", pen: "A", u: 0.31356, v: 0.52912 },
     ];
@@ -87,7 +88,7 @@ describe("shareable locations", () => {
     expect(parseSelection("?block=211&row=abc&seat=Infinity")).toEqual({
       mode: "seat",
       block: "211",
-      row: 1,
+      row: 9,
       seat: 1,
     });
     expect(parseSelection("?mode=standing&pen=Z&u=NaN&v=-2")).toEqual({
@@ -101,6 +102,19 @@ describe("shareable locations", () => {
       pen: "B",
       u: 0.5,
       v: 0.5,
+    });
+  });
+  it("uses continuous estimated row labels across stacked tiers", () => {
+    expect(getBlock("109")).toMatchObject({ firstRow: 1, lastRow: 8 });
+    expect(getBlock("209")).toMatchObject({ firstRow: 9, lastRow: 26 });
+    expect(getBlock("309")).toMatchObject({ firstRow: 27, lastRow: 38 });
+    expect(getBlock("224")).toMatchObject({ firstRow: 1, lastRow: 18 });
+    expect(getBlock("324")).toMatchObject({ firstRow: 19, lastRow: 30 });
+    expect(parseSelection("?block=324&row=29&seat=1")).toEqual({
+      mode: "seat",
+      block: "324",
+      row: 29,
+      seat: 1,
     });
   });
 });

@@ -78,10 +78,10 @@ $("#app").innerHTML = `
             )
             .join("")}</select>${icon("chevron")}</div>
           <div class="seat-fields">
-            <div><label class="field-label" for="row">ROW</label><div class="number-field"><button type="button" data-step="row:-1" aria-label="Previous row">−</button><input id="row" name="row" type="number" min="1" max="18" value="6" required inputmode="numeric" /><button type="button" data-step="row:1" aria-label="Next row">+</button></div></div>
+            <div><label class="field-label" for="row">ROW</label><div class="number-field"><button type="button" data-step="row:-1" aria-label="Previous row">−</button><input id="row" name="row" type="number" min="9" max="26" value="14" required inputmode="numeric" /><button type="button" data-step="row:1" aria-label="Next row">+</button></div></div>
             <div><label class="field-label" for="seat">SEAT</label><div class="number-field"><button type="button" data-step="seat:-1" aria-label="Previous seat">−</button><input id="seat" name="seat" type="number" min="1" max="30" value="12" required inputmode="numeric" /><button type="button" data-step="seat:1" aria-label="Next seat">+</button></div></div>
           </div>
-          <p id="model-note" class="model-note">Estimated layout · rows 1–18, seats 1–30</p>
+          <p id="model-note" class="model-note">Estimated ticket labels · rows 9–26, seats 1–30</p>
         </form>
         <div id="standing-picker" hidden>
           <div class="field-label">STANDING PEN <span>CHOOSE YOUR SPOT</span></div>
@@ -101,7 +101,7 @@ $("#app").innerHTML = `
         <div class="viewport" id="viewport">
           <div id="scene" class="scene"><div class="loading-state"><span class="loader"></span><p>Setting the stage…</p></div></div>
           <div class="view-topline"><span class="view-tag"><span class="live-dot"></span> YOUR PERSPECTIVE</span><span class="approx-tag">APPROXIMATE 3D</span></div>
-          <div class="view-bottomline"><div class="view-caption"><div class="eyebrow" id="view-tier">MAIN TIER / SEATED</div><h2 id="view-block">Block 211<span class="caption-dot">.</span></h2><p id="view-seat">Row 6 <span>·</span> Seat 12</p></div><button id="fullscreen" class="icon-button" aria-label="Expand preview" title="Expand preview">${icon("expand")}</button></div>
+          <div class="view-bottomline"><div class="view-caption"><div class="eyebrow" id="view-tier">MAIN TIER / SEATED</div><h2 id="view-block">Block 211<span class="caption-dot">.</span></h2><p id="view-seat">Row 14 <span>·</span> Seat 12</p></div><button id="fullscreen" class="icon-button" aria-label="Expand preview" title="Expand preview">${icon("expand")}</button></div>
           <div class="look-hint" id="look-hint">${icon("eye")} Drag to look around</div>
         </div>
         <div class="view-toolbar">
@@ -118,7 +118,7 @@ $("#app").innerHTML = `
   <footer><span>UNOFFICIAL · NOT AFFILIATED WITH LANY OR THE VENUE</span><a href="https://github.com/cerealbox39/concert-seat-preview" target="_blank" rel="noopener noreferrer">Built in the open ${icon("arrow")}</a></footer>
   <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
   <div id="toast" class="toast" role="status" hidden></div>
-  <dialog id="about-dialog" aria-labelledby="about-title"><button class="dialog-close icon-button" aria-label="Close information">${icon("close")}</button><span class="eyebrow">A NOTE BEFORE THE LIGHTS GO DOWN</span><h2 id="about-title">A preview.<br><em>Not a promise.</em></h2><p>This fan-made explorer imagines LANY’s soft world tour at Singapore Indoor Stadium on <strong>4 November 2026</strong>, using the event and block plan supplied for this project.</p><p>The block IDs and standing pen arrangement follow that plan. The plan is not to scale: stadium dimensions, row and seat counts, seat numbering direction, elevations, crowd, screens and stage design are <strong>illustrative estimates</strong>. They are not verified sightlines or an official production layout.</p><p>Row 1 is modelled at the front of each block. Seat numbers run across the block in the model and may differ from your ticket. The available number ranges belong to this model; a ticket outside them is not invalid. Distances are measured to the centre of the modelled stage; eye level is height above the arena floor.</p><p>Standing pens have no assigned positions. Your pin is a hypothetical spot; crowd density, people in front of you and access arrangements will change your real view.</p><div class="source-note"><strong>Reference notes</strong><p>Primary reference: the supplied LANY event seating diagram. External seat photos could not be verified during development. Singapore National Stadium is a different venue.</p><a href="https://aviewfrommyseat.com/venue/Singapore+Indoor+Stadium/" target="_blank" rel="noopener noreferrer">Explore Indoor Stadium fan photos ${icon("arrow")}</a><span>External, user-contributed photos; not used to calibrate this model.</span></div><button class="primary-button dialog-done">Got it. Let’s find my view ${icon("arrow")}</button></dialog>
+  <dialog id="about-dialog" aria-labelledby="about-title"><button class="dialog-close icon-button" aria-label="Close information">${icon("close")}</button><span class="eyebrow">A NOTE BEFORE THE LIGHTS GO DOWN</span><h2 id="about-title">A preview.<br><em>Not a promise.</em></h2><p>This fan-made explorer imagines LANY’s soft world tour at Singapore Indoor Stadium on <strong>4 November 2026</strong>, using the event and block plan supplied for this project.</p><p>The block IDs and standing pen arrangement follow that plan. The plan is not to scale: stadium dimensions, row and seat counts, seat numbering direction, elevations, crowd, screens and stage design are <strong>illustrative estimates</strong>. They are not verified sightlines or an official production layout.</p><p>The model treats row labels as continuing through stacked tiers: side stacks use estimated rows 1–8, 9–26 and 27–38; rear stacks use rows 1–18 and 19–30. Seat numbers run across each block and are estimated from its width. Real labels can differ, and a ticket outside these ranges is not invalid. Distances are measured to the centre of the modelled stage; eye level is height above the arena floor.</p><p>Standing pens have no assigned positions. Your pin is a hypothetical spot; crowd density, people in front of you and access arrangements will change your real view.</p><div class="source-note"><strong>Reference notes</strong><p>Primary reference: the supplied LANY event seating diagram. No authoritative public block-by-block row and seat inventory was available to verify these estimates. Singapore National Stadium is a different venue.</p><a href="https://aviewfrommyseat.com/venue/Singapore+Indoor+Stadium/" target="_blank" rel="noopener noreferrer">Explore Indoor Stadium fan photos ${icon("arrow")}</a><span>External, user-contributed photos; not used to calibrate this model.</span></div><button class="primary-button dialog-done">Got it. Let’s find my view ${icon("arrow")}</button></dialog>
   <dialog id="share-dialog" aria-labelledby="share-title"><button class="dialog-close icon-button" aria-label="Close share dialog">${icon("close")}</button><span class="eyebrow">SAVE YOUR PERSPECTIVE</span><h2 id="share-title">Pass it on.</h2><p>Copy this link to reopen the same seat or standing position.</p><label class="field-label" for="share-url">YOUR VIEW LINK</label><input id="share-url" class="share-url" readonly /><button class="primary-button dialog-done">Done ${icon("arrow")}</button></dialog>
 `;
 
@@ -247,7 +247,7 @@ function updatePin() {
 
 function limitSeat() {
   const b = getBlock(seated.block);
-  seated.row = clamp(seated.row, 1, b.rows);
+  seated.row = clamp(seated.row, b.firstRow, b.lastRow);
   seated.seat = clamp(seated.seat, 1, b.seats);
 }
 
@@ -255,16 +255,18 @@ function syncForm() {
   const b = getBlock(seated.block);
   $<HTMLSelectElement>("#block").value = seated.block;
   $<HTMLInputElement>("#row").value = String(seated.row);
-  $<HTMLInputElement>("#row").max = String(b.rows);
+  $<HTMLInputElement>("#row").min = String(b.firstRow);
+  $<HTMLInputElement>("#row").max = String(b.lastRow);
   $<HTMLInputElement>("#seat").value = String(seated.seat);
   $<HTMLInputElement>("#seat").max = String(b.seats);
   $("#tier-label").textContent = `${b.tier.toUpperCase()} TIER`;
   $("#model-note").textContent =
-    `Estimated layout · rows 1–${b.rows}, seats 1–${b.seats}`;
+    `Estimated ticket labels · rows ${b.firstRow}–${b.lastRow}, seats 1–${b.seats}`;
   for (const field of ["row", "seat"] as const) {
-    const max = field === "row" ? b.rows : b.seats;
+    const min = field === "row" ? b.firstRow : 1;
+    const max = field === "row" ? b.lastRow : b.seats;
     $<HTMLButtonElement>(`[data-step="${field}:-1"]`).disabled =
-      seated[field] <= 1;
+      seated[field] <= min;
     $<HTMLButtonElement>(`[data-step="${field}:1"]`).disabled =
       seated[field] >= max;
   }
@@ -368,9 +370,10 @@ document.querySelectorAll<HTMLButtonElement>("[data-step]").forEach((button) =>
       string,
     ];
     const input = $<HTMLInputElement>(`#${field}`);
+    const min = Number(input.min);
     seated[field] = clamp(
-      Math.round(Number(input.value) || 1) + Number(step),
-      1,
+      Math.round(Number(input.value) || min) + Number(step),
+      min,
       Number(input.max),
     );
     syncForm();

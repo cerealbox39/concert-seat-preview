@@ -123,9 +123,10 @@ export class SeatScene {
       seatIndex = 0;
     for (const block of BLOCKS) {
       const angle = Math.atan2(-block.tangent.z, block.tangent.x);
-      for (let row = 1; row <= block.rows; row++) {
-        const depth = ((row - 0.5) * block.depth) / block.rows;
-        const height = block.center.y + (row - 1) * block.rise;
+      for (let visualRow = 0; visualRow < block.rows; visualRow++) {
+        const ticketRow = block.firstRow + visualRow;
+        const depth = ((visualRow + 0.5) * block.depth) / block.rows;
+        const height = block.center.y + visualRow * block.rise;
         dummy.position.set(
           block.center.x + block.normal.x * depth,
           height - 0.2,
@@ -136,7 +137,7 @@ export class SeatScene {
         dummy.updateMatrix();
         terraces.setMatrixAt(rowIndex++, dummy.matrix);
         for (let seat = 1; seat <= block.seats; seat++) {
-          const p = seatPosition(block, row, seat);
+          const p = seatPosition(block, ticketRow, seat);
           dummy.position.set(p.x, height + 0.34, p.z);
           dummy.scale.set((block.width / block.seats) * 0.79, 0.09, 0.32);
           dummy.updateMatrix();

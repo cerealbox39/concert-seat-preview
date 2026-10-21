@@ -9,7 +9,7 @@ describe("preview-safe location handling", () => {
         DEFAULT_SELECTION,
         "https://example.com/concert-seat-preview/?block=999#old",
       ),
-    ).toBe("https://example.com/concert-seat-preview/?block=211&row=6&seat=12");
+    ).toBe("https://example.com/concert-seat-preview/?block=211&row=14&seat=12");
   });
   it("uses a hosted base URL in an embedded document when one is provided", () => {
     expect(
@@ -18,7 +18,7 @@ describe("preview-safe location handling", () => {
         "about:srcdoc",
         "https://example.com/concert-seat-preview/",
       ),
-    ).toBe("https://example.com/concert-seat-preview/?block=211&row=6&seat=12");
+    ).toBe("https://example.com/concert-seat-preview/?block=211&row=14&seat=12");
   });
   it("does not manufacture a shareable URL for a local or opaque preview", () => {
     for (const url of [

@@ -5,7 +5,11 @@ export type Point = { x: number; y: number; z: number };
 export type Block = {
   id: string;
   tier: "Lower" | "Main" | "Upper";
+  /** Number of simplified terraces rendered in the 3D model. */
   rows: number;
+  /** Estimated ticket labels for the first and last terrace. */
+  firstRow: number;
+  lastRow: number;
   seats: number;
   center: Point;
   normal: { x: number; z: number };
@@ -22,7 +26,7 @@ export const STAGE: Point = { x: 0, y: 4.2, z: -35 };
 export const DEFAULT_SELECTION: Selection = {
   mode: "seat",
   block: "211",
-  row: 6,
+  row: 14,
   seat: 12,
 };
 export const clamp = (value: number, min: number, max: number) =>
@@ -30,6 +34,7 @@ export const clamp = (value: number, min: number, max: number) =>
 
 function mainBlock(number: number): Block {
   let x: number, z: number, nx: number, nz: number, width: number;
+  const hasLowerTier = number <= 214 || number >= 228;
   if (number <= 214) {
     x = 28;
     z = -24 + (number - 209) * 8.4;
@@ -54,6 +59,8 @@ function mainBlock(number: number): Block {
     id: String(number),
     tier: "Main",
     rows: 18,
+    firstRow: hasLowerTier ? 9 : 1,
+    lastRow: hasLowerTier ? 26 : 18,
     seats: number >= 215 && number <= 227 ? 22 : 30,
     center: { x, y: 5.5, z },
     normal: { x: nx, z: nz },
@@ -79,6 +86,8 @@ export const BLOCKS: Block[] = [
       id: String(id),
       tier: "Lower" as const,
       rows: 8,
+      firstRow: 1,
+      lastRow: 8,
       seats: 24,
       center: {
         x: b.center.x - b.normal.x * 5.3,
@@ -97,6 +106,8 @@ export const BLOCKS: Block[] = [
       id: String(id),
       tier: "Upper" as const,
       rows: 12,
+      firstRow: b.lastRow + 1,
+      lastRow: b.lastRow + 12,
       seats: b.seats,
       center: {
         x: b.center.x + b.normal.x * 11,
@@ -117,11 +128,12 @@ export function getBlock(id: string): Block {
 }
 
 export function seatPosition(block: Block, row: number, seat: number): Point {
-  const back = ((row - 0.5) / block.rows) * block.depth;
+  const rowIndex = clamp(row, block.firstRow, block.lastRow) - block.firstRow;
+  const back = ((rowIndex + 0.5) / block.rows) * block.depth;
   const across = ((seat - 0.5) / block.seats - 0.5) * block.width;
   return {
     x: block.center.x + block.normal.x * back + block.tangent.x * across,
-    y: block.center.y + (row - 1) * block.rise + 1.18,
+    y: block.center.y + rowIndex * block.rise + 1.18,
     z: block.center.z + block.normal.z * back + block.tangent.z * across,
   };
 }
@@ -163,15 +175,15 @@ export function parseSelection(search: string): Selection {
   }
   const block = BLOCKS.find((b) => b.id === params.get("block"));
   if (!block) return { ...DEFAULT_SELECTION };
-  const positiveInt = (key: string, max: number) => {
-    const n = Number(params.get(key) ?? 1);
-    return Number.isFinite(n) ? clamp(Math.round(n), 1, max) : 1;
+  const boundedInt = (key: string, min: number, max: number) => {
+    const n = Number(params.get(key) ?? min);
+    return Number.isFinite(n) ? clamp(Math.round(n), min, max) : min;
   };
   return {
     mode: "seat",
     block: block.id,
-    row: positiveInt("row", block.rows),
-    seat: positiveInt("seat", block.seats),
+    row: boundedInt("row", block.firstRow, block.lastRow),
+    seat: boundedInt("seat", 1, block.seats),
   };
 }
 

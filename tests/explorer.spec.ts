@@ -11,11 +11,11 @@ test("renders a real 3D seat view and changes the selected seat", async ({
   await expect(page.locator("#scene canvas")).toBeVisible();
   const initialView = await page.locator("#scene canvas").screenshot();
   await page.selectOption("#block", "324");
-  await page.fill("#row", "10");
-  await page.fill("#seat", "7");
+  await page.fill("#row", "29");
+  await page.fill("#seat", "1");
   await expect(page.locator("#view-block")).toHaveText("Block 324.");
-  await expect(page.locator("#view-seat")).toHaveText("Row 10 · Seat 7");
-  await expect(page).toHaveURL(/block=324&row=10&seat=7/);
+  await expect(page.locator("#view-seat")).toHaveText("Row 29 · Seat 1");
+  await expect(page).toHaveURL(/block=324&row=29&seat=1/);
   await expect(page.locator("#view-tier")).toHaveText("UPPER TIER / SEATED");
   const selectedView = await page.locator("#scene canvas").screenshot();
   expect(selectedView.equals(initialView)).toBe(false);
