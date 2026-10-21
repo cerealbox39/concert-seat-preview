@@ -123,14 +123,12 @@ $("#app").innerHTML = `
 `;
 
 function makeBlockMap() {
-  // Isometric projection matching the supplied plan: stage at lower left,
-  // east blocks at lower right and west blocks at upper left.
+  // Flat top-down projection: stage at the top, west on the left and the
+  // 209–214 / 309–314 east stacks on the right.
   const projectedPoint = (x: number, z: number) => {
-    const forward = z + 35;
-    const east = -x;
     return {
-      x: 32 + forward * 1.95 + east * 1.12,
-      y: 224 - forward * 1.7 + east * 0.3,
+      x: 140 - x * 2.35,
+      y: 35 + (z + 35) * 1.95,
     };
   };
   const project = (x: number, z: number) => {
@@ -148,13 +146,11 @@ function makeBlockMap() {
       .join(" ");
   const foh = projectedPoint(0, 22.5);
   $("#block-map").innerHTML =
-    `<svg viewBox="0 35 280 220" role="group" aria-label="Approximate seating map matching the supplied plan. Stage at lower left; east blocks including 310 run along the lower right.">
-    <polygon points="13,231 65,253 97,233 45,211" class="map-stage-shadow"/>
-    <polygon points="13,226 65,248 97,228 45,206" class="map-stage"/><text x="55" y="229" class="stage-label" transform="rotate(22 55 229)">STAGE</text>
-    <polygon points="${floorPolygon(1.5, 20)}" class="map-pen-depth" transform="translate(0 2)"/><polygon points="${floorPolygon(-20, -1.5)}" class="map-pen-depth" transform="translate(0 2)"/>
+    `<svg viewBox="0 0 280 255" role="group" aria-label="Flat top-down seating map. Stage at the top; east blocks including 310 are on the right.">
+    <rect x="105" y="5" width="70" height="19" rx="2" class="map-stage"/><text x="140" y="18" class="stage-label">STAGE</text>
     <polygon points="${floorPolygon(1.5, 20)}" class="map-pen"/><polygon points="${floorPolygon(-20, -1.5)}" class="map-pen"/>
-    <text x="88" y="181" class="pen-label" transform="rotate(-31 88 181)">STANDING PEN B</text><text x="110" y="199" class="pen-label" transform="rotate(-31 110 199)">STANDING PEN A</text>
-    <rect x="${(foh.x - 5).toFixed(1)}" y="${(foh.y - 4).toFixed(1)}" width="10" height="8" rx="1" class="map-foh" transform="rotate(-31 ${foh.x.toFixed(1)} ${foh.y.toFixed(1)})"/><text x="${foh.x.toFixed(1)}" y="${(foh.y + 11).toFixed(1)}" class="foh-label">FOH</text>
+    <text x="114" y="100" class="pen-label"><tspan x="114">STANDING</tspan><tspan x="114" dy="8">PEN B</tspan></text><text x="166" y="100" class="pen-label"><tspan x="166">STANDING</tspan><tspan x="166" dy="8">PEN A</tspan></text>
+    <rect x="${(foh.x - 5).toFixed(1)}" y="${(foh.y - 4).toFixed(1)}" width="10" height="8" rx="1" class="map-foh"/><text x="${foh.x.toFixed(1)}" y="${(foh.y + 11).toFixed(1)}" class="foh-label">FOH</text>
     ${BLOCKS.map((b) => {
       const points = blockCorners(b)
         .map((p) => project(p.x, p.z))
@@ -163,9 +159,9 @@ function makeBlockMap() {
         b.center.x + b.normal.x * b.depth * 0.5,
         b.center.z + b.normal.z * b.depth * 0.5,
       ).split(",");
-      return `<g class="map-block tier-${b.tier.toLowerCase()}" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon class="map-block-depth" points="${points}" transform="translate(0 2)"/><polygon class="map-block-face" points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
+      return `<g class="map-block tier-${b.tier.toLowerCase()}" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon class="map-block-face" points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
     }).join("")}
-    <text x="19" y="155" class="direction-label" transform="rotate(-31 19 155)">WEST</text><text x="190" y="239" class="direction-label" transform="rotate(-31 190 239)">EAST</text><text x="246" y="59" class="direction-label" transform="rotate(-31 246 59)">NORTH</text>
+    <text x="13" y="135" class="direction-label" transform="rotate(-90 13 135)">WEST</text><text x="267" y="135" class="direction-label" transform="rotate(90 267 135)">EAST</text><text x="140" y="248" class="direction-label">NORTH</text>
   </svg>`;
   document.querySelectorAll<SVGGElement>("[data-block]").forEach((element) => {
     const choose = () => {

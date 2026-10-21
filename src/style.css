@@ -465,9 +465,6 @@ h2 {
   max-height: 285px;
   overflow: visible;
 }
-#block-map .map-stage-shadow {
-  fill: #171717;
-}
 #block-map .map-stage {
   fill: #f8f8f8;
   stroke: #1d1d1d;
@@ -478,9 +475,6 @@ h2 {
   letter-spacing: 1px;
   fill: #151515;
   text-anchor: middle;
-}
-#block-map .map-pen-depth {
-  fill: #1787b4;
 }
 #block-map .map-pen {
   fill: #31a3d1;
@@ -504,11 +498,6 @@ h2 {
 .map-block {
   cursor: pointer;
   outline: none;
-}
-.map-block .map-block-depth {
-  fill: #1787b4;
-  stroke: none;
-  pointer-events: none;
 }
 .map-block .map-block-face {
   fill: #31a3d1;
