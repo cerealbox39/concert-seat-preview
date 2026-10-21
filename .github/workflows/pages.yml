@@ -2,7 +2,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - codex/lany-seat-preview
   workflow_dispatch:
 
 permissions:
