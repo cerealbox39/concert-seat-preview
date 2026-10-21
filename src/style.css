@@ -449,77 +449,98 @@ h2 {
 .map-subtitle {
   font-size: 10px;
   color: #939e8a;
-  margin: 8px 0 7px;
+  margin: 8px 0 12px;
 }
-.block-map > svg {
+#block-map {
+  background: #fafafa;
+  border: 1px solid #d8d8d4;
+  border-radius: 7px;
+  padding: 7px;
+  box-shadow: 0 10px 28px #0003;
+}
+#block-map > svg {
   display: block;
   width: 100%;
   height: auto;
-  max-height: 235px;
+  max-height: 285px;
   overflow: visible;
 }
-.map-stage {
-  fill: #d7debd;
+#block-map .map-stage-shadow {
+  fill: #171717;
 }
-.stage-label {
+#block-map .map-stage {
+  fill: #f8f8f8;
+  stroke: #1d1d1d;
+  stroke-width: 0.8;
+}
+#block-map .stage-label {
   font: 6px var(--mono);
   letter-spacing: 1px;
-  fill: #29311e;
+  fill: #151515;
   text-anchor: middle;
 }
-.map-pen {
-  fill: #2c3628;
-  stroke: #4d5941;
-  stroke-width: 0.6;
+#block-map .map-pen-depth {
+  fill: #1787b4;
 }
-.pen-label {
-  font: 6px var(--mono);
+#block-map .map-pen {
+  fill: #31a3d1;
+  stroke: #fff;
+  stroke-width: 1.2;
+}
+#block-map .pen-label {
+  font: 6.5px var(--mono);
   letter-spacing: 0.6px;
-  fill: #939f86;
+  fill: #101820;
   text-anchor: middle;
 }
-.map-foh {
-  fill: #495140;
+#block-map .map-foh {
+  fill: #111;
 }
-.foh-label {
+#block-map .foh-label {
   font: 5px var(--mono);
-  fill: #9ba98d;
+  fill: #202020;
   text-anchor: middle;
 }
 .map-block {
   cursor: pointer;
   outline: none;
 }
-.map-block polygon {
-  fill: #3e4b36;
-  stroke: #202722;
-  stroke-width: 1;
+.map-block .map-block-depth {
+  fill: #1787b4;
+  stroke: none;
+  pointer-events: none;
+}
+.map-block .map-block-face {
+  fill: #31a3d1;
+  stroke: #fff;
+  stroke-width: 1.25;
   transition: fill 0.15s;
 }
 .map-block text {
   font:
-    5px Arial,
+    5.2px Arial,
     sans-serif;
-  fill: #a7b49c;
+  fill: #101820;
   text-anchor: middle;
   pointer-events: none;
 }
-.map-block:hover polygon,
-.map-block:focus-visible polygon {
-  fill: #819469;
-  stroke: #ddebab;
-  stroke-width: 1;
+.map-block:hover .map-block-face,
+.map-block:focus-visible .map-block-face {
+  fill: #79c9e8;
+  stroke: #102a3b;
+  stroke-width: 1.2;
 }
-.map-block.active polygon {
-  fill: var(--accent);
+.map-block.active .map-block-face {
+  fill: #405fc1;
+  stroke: #18295f;
 }
 .map-block.active text {
-  fill: #222c1a;
+  fill: #fff;
   font-weight: bold;
 }
-.direction-label {
-  font: 5px var(--mono);
-  fill: #78866d;
+#block-map .direction-label {
+  font: 5.3px var(--mono);
+  fill: #222;
   text-anchor: middle;
   letter-spacing: 2px;
 }
@@ -538,13 +559,13 @@ h2 {
   gap: 5px;
 }
 .map-legend i {
-  width: 5px;
-  height: 5px;
+  width: 8px;
+  height: 8px;
   border-radius: 1px;
-  background: #637354;
+  background: #31a3d1;
 }
 .map-legend .selected-dot {
-  background: var(--accent);
+  background: #405fc1;
 }
 .view-panel {
   min-width: 0;
@@ -911,6 +932,23 @@ footer svg {
   display: block;
   touch-action: none;
 }
+.pin-map .map-stage {
+  fill: #d7debd;
+}
+.pin-map .stage-label {
+  font: 7px var(--mono);
+  letter-spacing: 1px;
+  fill: #29311e;
+  text-anchor: middle;
+}
+.pin-map .map-foh {
+  fill: #495140;
+}
+.pin-map .foh-label {
+  font: 6px var(--mono);
+  fill: #9ba98d;
+  text-anchor: middle;
+}
 .pin-pen {
   fill: #283323;
   stroke: #536344;
@@ -931,12 +969,6 @@ footer svg {
 }
 .pin-map text {
   pointer-events: none;
-}
-.pin-map .stage-label {
-  font-size: 7px;
-}
-.pin-map .foh-label {
-  font-size: 6px;
 }
 .pin-halo {
   fill: #ddebab22;

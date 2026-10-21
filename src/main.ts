@@ -148,10 +148,12 @@ function makeBlockMap() {
       .join(" ");
   const foh = projectedPoint(0, 22.5);
   $("#block-map").innerHTML =
-    `<svg viewBox="0 0 280 255" role="group" aria-label="Approximate seating map matching the supplied plan. Stage at lower left; east blocks including 310 run along the lower right.">
+    `<svg viewBox="0 35 280 220" role="group" aria-label="Approximate seating map matching the supplied plan. Stage at lower left; east blocks including 310 run along the lower right.">
+    <polygon points="13,231 65,253 97,233 45,211" class="map-stage-shadow"/>
     <polygon points="13,226 65,248 97,228 45,206" class="map-stage"/><text x="55" y="229" class="stage-label" transform="rotate(22 55 229)">STAGE</text>
+    <polygon points="${floorPolygon(1.5, 20)}" class="map-pen-depth" transform="translate(0 2)"/><polygon points="${floorPolygon(-20, -1.5)}" class="map-pen-depth" transform="translate(0 2)"/>
     <polygon points="${floorPolygon(1.5, 20)}" class="map-pen"/><polygon points="${floorPolygon(-20, -1.5)}" class="map-pen"/>
-    <text x="88" y="181" class="pen-label" transform="rotate(-31 88 181)">PEN B</text><text x="110" y="199" class="pen-label" transform="rotate(-31 110 199)">PEN A</text>
+    <text x="88" y="181" class="pen-label" transform="rotate(-31 88 181)">STANDING PEN B</text><text x="110" y="199" class="pen-label" transform="rotate(-31 110 199)">STANDING PEN A</text>
     <rect x="${(foh.x - 5).toFixed(1)}" y="${(foh.y - 4).toFixed(1)}" width="10" height="8" rx="1" class="map-foh" transform="rotate(-31 ${foh.x.toFixed(1)} ${foh.y.toFixed(1)})"/><text x="${foh.x.toFixed(1)}" y="${(foh.y + 11).toFixed(1)}" class="foh-label">FOH</text>
     ${BLOCKS.map((b) => {
       const points = blockCorners(b)
@@ -161,9 +163,9 @@ function makeBlockMap() {
         b.center.x + b.normal.x * b.depth * 0.5,
         b.center.z + b.normal.z * b.depth * 0.5,
       ).split(",");
-      return `<g class="map-block" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
+      return `<g class="map-block tier-${b.tier.toLowerCase()}" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon class="map-block-depth" points="${points}" transform="translate(0 2)"/><polygon class="map-block-face" points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
     }).join("")}
-    <text x="19" y="155" class="direction-label" transform="rotate(-31 19 155)">WEST</text><text x="190" y="239" class="direction-label" transform="rotate(-31 190 239)">EAST</text>
+    <text x="19" y="155" class="direction-label" transform="rotate(-31 19 155)">WEST</text><text x="190" y="239" class="direction-label" transform="rotate(-31 190 239)">EAST</text><text x="246" y="59" class="direction-label" transform="rotate(-31 246 59)">NORTH</text>
   </svg>`;
   document.querySelectorAll<SVGGElement>("[data-block]").forEach((element) => {
     const choose = () => {
