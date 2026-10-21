@@ -48,7 +48,7 @@ test("changes perspective by block map and validates generated row bounds", asyn
   await expect(page.locator("#view-seat")).toHaveText("Row 21 · Seat 24");
 });
 
-test("places block 310 on the east/right side of the supplied-plan map", async ({
+test("places block 310 on the left side of the audience-view map", async ({
   page,
 }) => {
   await page.goto("/?block=310&row=21&seat=1");
@@ -62,7 +62,7 @@ test("places block 310 on the east/right side of the supplied-plan map", async (
   const block = await page.locator('[data-block="310"]').boundingBox();
   expect(stage).not.toBeNull();
   expect(block).not.toBeNull();
-  expect(block!.x).toBeGreaterThan(stage!.x);
+  expect(block!.x).toBeLessThan(stage!.x);
 });
 
 test("drops a standing pin, supports keyboard adjustments, and restores its shared URL", async ({

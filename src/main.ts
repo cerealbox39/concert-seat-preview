@@ -124,11 +124,11 @@ $("#app").innerHTML = `
 `;
 
 function makeBlockMap() {
-  // Flat top-down projection: stage at the top, west on the left and the
-  // 209–214 / 309–314 east stacks on the right.
+  // Flat top-down audience view: stage at the top, with the east-side
+  // 209–214 / 309–314 stacks (including block 310) on the left.
   const projectedPoint = (x: number, z: number) => {
     return {
-      x: 140 - x * 2.35,
+      x: 140 + x * 2.35,
       y: 35 + (z + 35) * 1.95,
     };
   };
@@ -147,7 +147,7 @@ function makeBlockMap() {
       .join(" ");
   const foh = projectedPoint(0, 22.5);
   $("#block-map").innerHTML =
-    `<svg viewBox="0 0 280 255" role="group" aria-label="Flat top-down seating map. Stage at the top; east blocks including 310 are on the right.">
+    `<svg viewBox="0 0 280 255" role="group" aria-label="Flat top-down seating map. Stage at the top; east blocks including 310 are on the left.">
     <defs>
       <radialGradient id="arena-glow" cx="50%" cy="32%" r="67%"><stop offset="0" stop-color="#73875e" stop-opacity=".15"/><stop offset="1" stop-color="#111713" stop-opacity="0"/></radialGradient>
       <pattern id="arena-grid" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M12 0H0V12" fill="none" stroke="#ddebab" stroke-opacity=".025" stroke-width=".5"/></pattern>
@@ -168,7 +168,7 @@ function makeBlockMap() {
       ).split(",");
       return `<g class="map-block tier-${b.tier.toLowerCase()}" data-block="${b.id}" tabindex="0" role="button" aria-label="Block ${b.id}, ${b.tier.toLowerCase()} tier"><polygon class="map-block-hit" points="${points}"/><polygon class="map-block-face" points="${points}"/><text x="${label[0]}" y="${Number(label[1]) + 2}">${b.id}</text></g>`;
     }).join("")}
-    <text x="13" y="135" class="direction-label" transform="rotate(-90 13 135)">WEST</text><text x="267" y="135" class="direction-label" transform="rotate(90 267 135)">EAST</text><text x="140" y="248" class="direction-label">NORTH</text>
+    <text x="13" y="135" class="direction-label" transform="rotate(-90 13 135)">EAST</text><text x="267" y="135" class="direction-label" transform="rotate(90 267 135)">WEST</text><text x="140" y="248" class="direction-label">NORTH</text>
   </svg>`;
   document.querySelectorAll<SVGGElement>("[data-block]").forEach((element) => {
     const choose = () => {
