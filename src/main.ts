@@ -2,6 +2,7 @@ import "./style.css";
 import { selectionUrl, updateLocation } from "./location";
 import {
   BLOCKS,
+  DEFAULT_FOV,
   DEFAULT_SELECTION,
   blockCorners,
   clamp,
@@ -100,7 +101,7 @@ $("#app").innerHTML = `
         </div>
         <div class="view-toolbar">
           <button id="reset-view" class="text-button">${icon("reset")} Face the stage</button>
-          <div class="zoom-control"><label for="zoom">ZOOM</label><input type="range" id="zoom" min="42" max="80" value="68" aria-label="Field of view" /><output id="zoom-value" for="zoom">1.0×</output></div>
+          <div class="zoom-control"><label for="zoom">ZOOM</label><input type="range" id="zoom" min="36" max="80" value="${DEFAULT_FOV}" aria-label="Field of view" /><output id="zoom-value" for="zoom">1.0×</output></div>
           <button id="share-view" class="text-button" aria-label="Share view">${icon("share")} <span>Share view</span></button>
         </div>
         <div class="view-stats"><div><span class="stat-label">YOUR LOCATION</span><strong id="stat-location">East side</strong></div><div><span class="stat-label">STAGE DISTANCE <span title="Estimated from conceptual geometry">≈</span></span><strong id="stat-distance">45 <small>m</small></strong></div><div><span class="stat-label">EYE LEVEL <span title="Estimated from conceptual geometry">≈</span></span><strong id="stat-height">9 <small>m</small></strong></div><div class="stat-note">A feeling for the view.<br>A head start on the memories.</div></div>
@@ -119,7 +120,7 @@ $("#app").innerHTML = `
   <footer><span>UNOFFICIAL · NOT AFFILIATED WITH LANY OR THE VENUE</span><a href="https://github.com/cerealbox39/concert-seat-preview" target="_blank" rel="noopener noreferrer">Built in the open ${icon("arrow")}</a></footer>
   <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
   <div id="toast" class="toast" role="status" hidden></div>
-  <dialog id="about-dialog" aria-labelledby="about-title"><button class="dialog-close icon-button" aria-label="Close information">${icon("close")}</button><span class="eyebrow">A NOTE BEFORE THE LIGHTS GO DOWN</span><h2 id="about-title">A preview.<br><em>Not a promise.</em></h2><p>This fan-made explorer imagines LANY’s soft world tour at Singapore Indoor Stadium on <strong>4 November 2026</strong>, using the event and block plan supplied for this project.</p><p>The block IDs and standing pen arrangement follow that plan. The plan is not to scale: stadium dimensions, row and seat counts, seat numbering direction, elevations, crowd, screens and stage design are <strong>illustrative estimates</strong>. They are not verified sightlines or an official production layout.</p><p>Ticket row labels are treated as restarting within each numbered block. The selector accepts rows 1–35 as a broad input estimate, then maps the chosen row proportionally onto the simplified 3D terraces. Seat numbers run across each block and are estimated from its width. Real limits can differ, and a ticket outside these ranges is not invalid. Distances are measured to the centre of the modelled stage; eye level is height above the arena floor.</p><p>Standing pens have no assigned positions. Your pin is a hypothetical spot; crowd density, people in front of you and access arrangements will change your real view.</p><div class="source-note"><strong>Reference notes</strong><p>Primary reference: the supplied LANY event seating diagram. No authoritative public block-by-block row and seat inventory was available to verify these estimates. Singapore National Stadium is a different venue.</p><a href="https://aviewfrommyseat.com/venue/Singapore+Indoor+Stadium/" target="_blank" rel="noopener noreferrer">Explore Indoor Stadium fan photos ${icon("arrow")}</a><span>External, user-contributed photos; not used to calibrate this model.</span></div><button class="primary-button dialog-done">Got it. Let’s find my view ${icon("arrow")}</button></dialog>
+  <dialog id="about-dialog" aria-labelledby="about-title"><button class="dialog-close icon-button" aria-label="Close information">${icon("close")}</button><span class="eyebrow">A NOTE BEFORE THE LIGHTS GO DOWN</span><h2 id="about-title">A preview.<br><em>Not a promise.</em></h2><p>This fan-made explorer imagines LANY’s soft world tour at Singapore Indoor Stadium on <strong>4 November 2026</strong>, using the event and block plan supplied for this project.</p><p>The block IDs and standing pen arrangement follow that plan. The plan is not to scale: stadium dimensions, row and seat counts, seat numbering direction, elevations, crowd, screens and stage design are <strong>illustrative estimates</strong>. They are not verified sightlines or an official production layout.</p><p>Ticket row labels are treated as restarting within each numbered block. The selector accepts rows 1–35 as a broad input estimate, then maps the chosen row proportionally onto the simplified 3D terraces. Seat numbers run across each block and are estimated from its width. Real limits can differ, and a ticket outside these ranges is not invalid. Distances are measured to the centre of the modelled stage; eye level is height above the arena floor.</p><p>Standing pens have no assigned positions. Your pin is a hypothetical spot; crowd density, people in front of you and access arrangements will change your real view.</p><div class="source-note"><strong>Reference notes</strong><p>Primary references: the supplied LANY event seating diagram and a fan photo labelled Block 310, Row 33, Seats 10/11. The photo informs the default camera framing; its lens, zoom and production layout are unknown. No authoritative public block-by-block row and seat inventory was available to verify these estimates.</p><a href="https://aviewfrommyseat.com/venue/Singapore+Indoor+Stadium/" target="_blank" rel="noopener noreferrer">Explore Indoor Stadium fan photos ${icon("arrow")}</a><span>External, user-contributed photos can vary by camera lens, zoom and concert setup.</span></div><button class="primary-button dialog-done">Got it. Let’s find my view ${icon("arrow")}</button></dialog>
   <dialog id="share-dialog" aria-labelledby="share-title"><button class="dialog-close icon-button" aria-label="Close share dialog">${icon("close")}</button><span class="eyebrow">SAVE YOUR PERSPECTIVE</span><h2 id="share-title">Pass it on.</h2><p>Copy this link to reopen the same seat or standing position.</p><label class="field-label" for="share-url">YOUR VIEW LINK</label><input id="share-url" class="share-url" readonly /><button class="primary-button dialog-done">Done ${icon("arrow")}</button></dialog>
 `;
 
@@ -415,7 +416,7 @@ for (const pen of ["A", "B"] as const)
   });
 $("#reset-view").addEventListener("click", () => {
   scene?.reset();
-  $<HTMLInputElement>("#zoom").value = "68";
+  $<HTMLInputElement>("#zoom").value = String(DEFAULT_FOV);
   $("#zoom-value").textContent = "1.0×";
   $("#look-hint").classList.remove("dismissed");
 });
@@ -423,7 +424,7 @@ $("#zoom").addEventListener("input", () => {
   const value = Number($<HTMLInputElement>("#zoom").value);
   scene?.setFov(value);
   $("#zoom-value").textContent =
-    `${(Math.tan((68 * Math.PI) / 360) / Math.tan((value * Math.PI) / 360)).toFixed(1)}×`;
+    `${(Math.tan((DEFAULT_FOV * Math.PI) / 360) / Math.tan((value * Math.PI) / 360)).toFixed(1)}×`;
 });
 
 function toast(message: string) {

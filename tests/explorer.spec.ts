@@ -103,9 +103,9 @@ test("supports looking, zoom, reset, and the model explanation", async ({
   await page.keyboard.press("ArrowLeft");
   await expect(page.locator("#look-hint")).toHaveClass(/dismissed/);
   await page.locator("#zoom").fill("42");
-  await expect(page.locator("#zoom-value")).toHaveText("1.8×");
+  await expect(page.locator("#zoom-value")).toHaveText("1.3×");
   await page.getByRole("button", { name: "Face the stage" }).click();
-  await expect(page.locator("#zoom")).toHaveValue("68");
+  await expect(page.locator("#zoom")).toHaveValue("52");
   await page.getByRole("button", { name: "About this preview" }).click();
   await expect(
     page.getByRole("dialog", { name: "A preview. Not a promise." }),

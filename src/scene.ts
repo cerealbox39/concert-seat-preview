@@ -2,6 +2,7 @@ import * as THREE from "three";
 import stagePosterUrl from "./assets/lany-singapore-poster.jpg";
 import {
   BLOCKS,
+  DEFAULT_FOV,
   STAGE,
   positionFor,
   seatPosition,
@@ -11,7 +12,7 @@ import {
 export class SeatScene {
   private renderer: THREE.WebGLRenderer;
   private scene = new THREE.Scene();
-  private camera = new THREE.PerspectiveCamera(68, 1, 0.08, 230);
+  private camera = new THREE.PerspectiveCamera(DEFAULT_FOV, 1, 0.08, 230);
   private heading = 0;
   private pitch = 0;
   private selection: Selection;
@@ -351,7 +352,7 @@ export class SeatScene {
   reset() {
     this.heading = 0;
     this.pitch = 0;
-    this.setFov(68);
+    this.setFov(DEFAULT_FOV);
     this.aim();
   }
   setFov(fov: number) {
