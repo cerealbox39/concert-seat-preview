@@ -23,7 +23,7 @@ export type Selection =
   | { mode: "standing"; pen: "A" | "B"; u: number; v: number };
 
 export const STAGE: Point = { x: 0, y: 4.2, z: -35 };
-/** Calibrated against the supplied Block 310, Row 33 fan photo. */
+/** Default framing calibrated against a venue reference photo. */
 export const DEFAULT_FOV = 52;
 export const DEFAULT_SELECTION: Selection = {
   mode: "seat",
